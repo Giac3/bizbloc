@@ -1,9 +1,34 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
+import { uuidv4 } from '@firebase/util'
 import bizbloclogo from '../assets/bizbloclogo.svg'
+import infosvg from '../assets/info.svg'
 import { FcGoogle} from 'react-icons/fc'
 import { BsInfoSquareFill } from 'react-icons/bs'
+import { motion } from 'framer-motion'
+import { useNavigate } from 'react-router-dom'
+import { useAuth } from '../contexts/AuthContext'
 
 const Home = () => {
+  const { signIn, signInGuest } = useAuth()
+  const [info, setInfo] = useState(false)
+  const { currentUser } = useAuth()
+  const navigate = useNavigate()
+
+  useEffect(() => {
+    if (currentUser!) {
+      navigate(`/bizcard-${currentUser.uid}`)
+    }
+
+  }, [currentUser])
+
+  const handleAnonLogIn = async () => {
+    await signInGuest(`Guest-${uuidv4().split("-")[0]}`)
+  }
+
+  const handleGoogleLogIn = async () => {
+    await signIn()
+  }
+
   return (
     <div  className='w-screen h-screen items-center justify-center  flex  '>
       <div className='w-screen h-screen fixed' >
@@ -26,11 +51,21 @@ const Home = () => {
     <div className='bg-white flex-col gap-1 shadow-md w-[300px] flex justify-center items-center h-[250px]  absolute right-40 z-10 rounded-md'>
 <h1 className=' font-josefin font-extrabold'>No Need to Sign Up</h1>
 <h2 className=' font-josefin font-medium text-gray-500 text-opacity-60'>Just Log In with one of our options</h2>
-<button className=' bg-gray-500 text-white p-2 font-josefin rounded-md shadow-md m-2'>Anonymous Log In</button>
-<button className=' bg-blue-200 text-gray-600 p-2 flex items-center justify-center gap-2 font-josefin rounded-md shadow-md m-2'>Log In With Google <FcGoogle className='w-6 h-6'/> </button>
-    <div>
+<button onClick={handleAnonLogIn} className=' bg-gray-500 text-white p-2 font-josefin rounded-md shadow-md m-2'>Anonymous Log In</button>
+<button onClick={handleGoogleLogIn} className=' bg-blue-200 text-gray-600 p-2 flex items-center justify-center gap-2 font-josefin rounded-md shadow-md m-2'>Log In With Google <FcGoogle className='w-6 h-6'/> </button>
+    <motion.div 
+    onHoverStart={() => {setInfo(true)}}>
       <BsInfoSquareFill className='w-6 h-6 cursor-pointer text-gray-400 shadow-md'/>
-    </div>
+    </motion.div>
+
+    {
+      info?     <motion.div 
+      initial={{scaleY:0, originY:0}}
+      animate={{scaleY:1, originY:0}}
+      onHoverEnd={() => {setInfo(false)}} 
+      className='z-10 absolute top-44 mt-2'><img draggable={false}  src={infosvg}/> </motion.div>: null
+    }
+
     </div>
     
     </div>
