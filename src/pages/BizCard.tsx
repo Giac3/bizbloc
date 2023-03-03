@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { update, useAuth } from '../contexts/AuthContext'
 import { BsLinkedin } from 'react-icons/bs'
-import { FaInstagram, FaGithubSquare, FaTwitter } from 'react-icons/fa'
+import { FaInstagram, FaGithubSquare, FaTwitter, FaArrowUp } from 'react-icons/fa'
 import { AiFillFacebook} from 'react-icons/ai'
 import { IoLogoYoutube } from 'react-icons/io'
 import { IoAddCircleSharp } from 'react-icons/io5'
@@ -13,6 +13,14 @@ import { FcEditImage } from 'react-icons/fc'
 import AddSkills from '../components/AddSkills'
 import ScrollContainer from 'react-indiana-drag-scroll'
 import AddLink from '../components/AddLink'
+import bg from '../assets/bg.svg'
+import bg2 from '../assets/bg2.svg'
+import bg3 from '../assets/bg3.svg'
+import bg4 from '../assets/bg4.svg'
+import bg5 from '../assets/bg5.svg'
+import { motion } from 'framer-motion'
+
+
 
 const BizCard = () => {
     const  {currentUser } = useAuth()
@@ -36,6 +44,8 @@ const BizCard = () => {
     const [ youtube, setYoutube ] = useState("")
     const [ facebook, setFacebook ] = useState("")
     const [showAddLinks, setShowAddLinks] = useState(false)
+    const [animateBGSelector, setAnimateBGSelector] = useState(false)
+    const [backgroundImage, setBackgroundImage] = useState("")
 
 
     useEffect(() => {
@@ -55,6 +65,7 @@ const BizCard = () => {
                 setWebsite(docsnap.data()?.website)
                 setYoutube(docsnap.data()?.youtube)
                 setTwitter(docsnap.data()?.twitter)
+                setBackgroundImage(docsnap.data()?.background)
 
             }
         })
@@ -102,6 +113,7 @@ const BizCard = () => {
             instagram: instagram,
             facebook: facebook,
             skills: skills,
+            background: backgroundImage,
         }
         update(object, currentUser, setLoading, newPhoto)
 
@@ -119,9 +131,29 @@ const BizCard = () => {
         navigator.clipboard.writeText(window.location.href);
     }
 
+    const handleBackgroundSelector = () => {
+        if (animateBGSelector) {
+            setAnimateBGSelector(false)
+        } else {
+            setAnimateBGSelector(true)
+         }
+    }
+
+    const changeBackground = (bg:any) => {
+        setBackgroundImage(bg)
+    }
+
   return (
-    <div className='w-scren h-screen gap-2 flex-col bg-blue-100 flex items-center justify-center'>
-        <div className='w-[400px] h-[300px] grid-cols-2 p-3 bg-white shadow-md rounded-md grid '>
+    <div className='w-screen overflow-hidden fixed h-screen gap-2 flex-col bg-blue-100 flex items-center justify-center'>
+        <div style={{
+    width: '100%',
+    height: '100%',
+    backgroundImage: backgroundImage === "bg" ? `url(${bg})`  : backgroundImage === "bg2" ? `url(${bg2})` : backgroundImage === "bg3" ? `url(${bg3})` :backgroundImage === "bg4" ? `url(${bg4})`: backgroundImage === "bg5" ? `url(${bg5})` : "",
+    backgroundSize: 'cover'
+  }} className='absolute h-[100%]'>
+        
+        </div>
+        <div className='w-[400px] h-[300px] z-[10] grid-cols-2 p-3 bg-white shadow-md rounded-md grid '>
             <div className='w-32 h-32  rounded-md '>
             <button disabled={loading} onClick={handleEditPhoto} className='absolute w-5 rounded-md h-5 items-center justify-center flex '> <FcEditImage/> </button>
             <input onChange={handleChangePhoto} className='absolute hidden' id='file'  ref={inputFile} type={"file"}/>
@@ -180,7 +212,7 @@ const BizCard = () => {
             
             
         </div>
-        <div className='w-[400px] flex justify-end items-center gap-2'>
+        <div className='w-[400px] z-[10] flex justify-end items-center gap-2'>
             <div className=' w-full '>
                 <button onClick={handleCopy} className='text-xs duration-300 hover:bg-white font-josefin border-[1px] border-black p-1 rounded-md shadow-md'>Copy Link</button>
             </div>
@@ -193,6 +225,75 @@ const BizCard = () => {
         {
             showAddLinks?<AddLink setShowAddLinks={setShowAddLinks} setLinkedin={setLinkedin} setInstagram={setInstagram} setGithub={setGithub} setFacebook={setFacebook} setYoutube={setYoutube} setTwitter={setTwitter} setWebsite={setWebsite} linkedin={linkedin} github={github} instagram={instagram} youtube={youtube} facebook={facebook} twitter={twitter} website={website}/>:null 
         }
+        <motion.div
+        onClick={handleBackgroundSelector}
+        initial={{translateY: 0}}
+        animate={{translateY:  animateBGSelector? -130: 0}}
+        className='bg-white cursor-pointer w-32 gap-1 flex-row p-2 justify-center h-10 absolute text-xs text-center items-center flex -bottom-1  rounded-md font-josefin'><span>Change Background</span>
+        <motion.div
+        initial={{rotate: 0}}
+        animate={{rotate:  animateBGSelector? 180: 0}}>
+        <FaArrowUp/>
+        </motion.div>
+        </motion.div>
+        
+        <motion.div
+         initial={{translateY: 0}}
+         animate={{translateY:  animateBGSelector? -130: 0}}
+         className='bg-white w-[400px] h-32 absolute text-xs items-center flex   -bottom-32 rounded-md font-josefin'>
+<ScrollContainer horizontal={true} vertical={false} className='bg-white grid grid-flow-col  w-[400px] h-32 absolute text-xs text-center items-center    rounded-md font-josefin'>
+            <div
+            onClick={() => {changeBackground("normal")}}
+            style={{border: backgroundImage === "normal"? "1px solid yellow": ""}}
+            className='w-24 h-24 ml-3 rounded-md bg-blue-200 shadow-md'></div>
+            
+            <div 
+            onClick={() => {changeBackground("bg")}}
+            style={{
+                border: backgroundImage === "bg"? "1px solid yellow": "",      
+                width: '96px',
+                height: '96px',
+                backgroundImage: `url(${bg})`,
+                backgroundSize: 'cover'
+  }}  className='w-24 h-24 ml-3 rounded-md bg-blue-200 shadow-md'></div>
+            <div 
+            onClick={() => {changeBackground("bg2")}}
+            style={{   
+                border: backgroundImage === "bg2"? "1px solid yellow": "",
+                width: '96px',
+                height: '96px',
+                backgroundImage: `url(${bg2})`,
+                backgroundSize: 'cover'
+  }}  className='w-24 h-24 ml-3 rounded-md bg-blue-200 shadow-md'></div>
+            <div 
+            onClick={() => {changeBackground("bg3")}}
+            style={{
+                border: backgroundImage === "bg3"? "1px solid yellow": "",
+                width: '96px',
+                height: '96px',
+                backgroundImage: `url(${bg3})`,
+                backgroundSize: 'cover'
+  }}  className='w-24 h-24 ml-3 rounded-md bg-blue-200 shadow-md'></div>
+            <div 
+            onClick={() => {changeBackground("bg4")}}
+            style={{
+                border: backgroundImage === "bg4"? "1px solid yellow": "",
+                width: '96px',
+                height: '96px',
+                backgroundImage: `url(${bg4})`,
+                backgroundSize: 'cover'
+  }}  className='w-24 h-24 ml-3 rounded-md bg-blue-200 shadow-md'></div>
+            <div 
+            onClick={() => {changeBackground("bg5")}}
+            style={{
+                border: backgroundImage === "bg5"? "1px solid yellow": "",
+                width: '96px',
+                height: '96px',
+                backgroundImage: `url(${bg5})`,
+                backgroundSize: 'cover'
+  }}  className='w-24 h-24 ml-3 mr-3 rounded-md bg-blue-200 shadow-md'></div>
+</ScrollContainer>
+         </motion.div>
     </div>
   )
 }

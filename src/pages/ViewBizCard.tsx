@@ -7,6 +7,12 @@ import { GoBrowser } from 'react-icons/go'
 import { IoLogoYoutube } from 'react-icons/io'
 import ScrollContainer from 'react-indiana-drag-scroll'
 import { db } from '../firebase'
+import '../App.css'
+import bg from '../assets/bg.svg'
+import bg2 from '../assets/bg2.svg'
+import bg3 from '../assets/bg3.svg'
+import bg4 from '../assets/bg4.svg'
+import bg5 from '../assets/bg5.svg'
 
 const ViewBizCard = ({userID}:any) => {
   const docRef = doc(db, "/bizcards", `${userID}`)
@@ -15,11 +21,7 @@ const ViewBizCard = ({userID}:any) => {
     const [company, setCompany ] = useState("")
     const [email, setEmail ] = useState("")
     const [bio, setBio ] = useState("")
-    const [loading, setLoading] = useState(false)
     const [photo, setPhoto] = useState("")
-    const [newPhoto, setNewPhoto] = useState(null)
-    const inputFile = useRef<HTMLInputElement | null>(null);
-    const [showAddSkills, setShowAddSkills] = useState(false)
     const [skills, setSkills] = useState<any>([])
     const [ linkedin, setLinkedin ] = useState("")
     const [ github, setGithub ] = useState("")
@@ -28,7 +30,9 @@ const ViewBizCard = ({userID}:any) => {
     const [ website, setWebsite ] = useState("")
     const [ youtube, setYoutube ] = useState("")
     const [ facebook, setFacebook ] = useState("")
-    const [showAddLinks, setShowAddLinks] = useState(false)
+    const [backgroundImage, setBackgroundImage] = useState("")
+    
+    
   useEffect(() => {
     getDoc(docRef).then((docsnap) => {
       if (docsnap.exists()) {
@@ -46,6 +50,7 @@ const ViewBizCard = ({userID}:any) => {
         setWebsite(docsnap.data()?.website)
         setYoutube(docsnap.data()?.youtube)
         setTwitter(docsnap.data()?.twitter)
+        setBackgroundImage(docsnap.data()?.background)
 }
     })
 
@@ -53,7 +58,15 @@ const ViewBizCard = ({userID}:any) => {
 
   return (
     <div className='w-scren h-screen gap-2 flex-col bg-blue-100 flex items-center justify-center'>
-        <div className='w-[400px] h-[300px] grid-cols-2 p-3 bg-white shadow-md rounded-md grid '>
+        <div style={{
+    width: '100%',
+    height: '100%',
+    backgroundImage: backgroundImage === "bg" ? `url(${bg})`  : backgroundImage === "bg2" ? `url(${bg2})` : backgroundImage === "bg3" ? `url(${bg3})` :backgroundImage === "bg4" ? `url(${bg4})`: backgroundImage === "bg5" ? `url(${bg5})` : "",
+    backgroundSize: 'cover'
+  }} className='absolute h-[100%]'>
+        
+        </div>
+        <div className='w-[400px] z-20 h-[300px] grid-cols-2 p-3 bg-white shadow-md rounded-md grid '>
             <div className='w-32 h-32  rounded-md '>
               <img draggable={false} className='rounded-md' src={photo !== "" ? photo : "https://api.dicebear.com/5.x/fun-emoji/svg?seed=Boots"}/>
             </div>

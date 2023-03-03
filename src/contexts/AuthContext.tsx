@@ -81,6 +81,7 @@ export async function update(object:any, currentUser:any, setLoading:any, image:
         facebook: object.facebook,
         bio: object.bio,
         skills: object.skills,
+        background: object.background
     })
     setLoading(false)
 }
