@@ -28,7 +28,7 @@ function App() {
         currentUser! && url.includes('bizcard-') && url.split('bizcard-')[1] !== currentUser.uid ? <Route path={ `/bizcard-${url.split('bizcard-')[1]}` } element={<ViewBizCard user={url.split('bizcard-')[1]}/>} />:null
       }
       {
-        !currentUser && url.includes('bizcard-') && url.split('bizcard-')[1] ? <Route path={ `/bizcard-${url.split('bizcard-')[1]}` } element={<ViewBizCard user={url.split('bizcard-')[1]}/>} />:null
+        !currentUser && url.includes('bizcard-') && url.split('bizcard-')[1] ? <Route path={ `/bizcard-${url.split('bizcard-')[1]}` } element={<ViewBizCard userID={url.split('bizcard-')[1]}/>} />:null
       }
     </Routes>
     

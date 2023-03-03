@@ -12,6 +12,7 @@ import { db } from '../firebase'
 import { FcEditImage } from 'react-icons/fc'
 import AddSkills from '../components/AddSkills'
 import ScrollContainer from 'react-indiana-drag-scroll'
+import AddLink from '../components/AddLink'
 
 const BizCard = () => {
     const  {currentUser } = useAuth()
@@ -34,6 +35,7 @@ const BizCard = () => {
     const [ website, setWebsite ] = useState("")
     const [ youtube, setYoutube ] = useState("")
     const [ facebook, setFacebook ] = useState("")
+    const [showAddLinks, setShowAddLinks] = useState(false)
 
 
     useEffect(() => {
@@ -46,6 +48,14 @@ const BizCard = () => {
                 bioRef.current.value = docsnap.data()?.bio
                 setPhoto(docsnap.data()?.photo)
                 setSkills(docsnap.data()?.skills! ? docsnap.data()?.skills : [] )
+                setLinkedin(docsnap.data()?.linkedin)
+                setGithub(docsnap.data()?.github)
+                setFacebook(docsnap.data()?.facebook)
+                setInstagram(docsnap.data()?.instagram)
+                setWebsite(docsnap.data()?.website)
+                setYoutube(docsnap.data()?.youtube)
+                setTwitter(docsnap.data()?.twitter)
+
             }
         })
     }, [])
@@ -84,13 +94,13 @@ const BizCard = () => {
             company: companyRef.current.value,
             email: emailRef.current.value,
             bio: bioRef.current.value,
-            linkedin: "http",
-            github: "http",
-            twitter: "http",
-            website: "http",
-            youtube: "http",
-            instagram: "http",
-            facebook: "http",
+            linkedin: linkedin,
+            github: github,
+            twitter: twitter,
+            website: website,
+            youtube: youtube,
+            instagram: instagram,
+            facebook: facebook,
             skills: skills,
         }
         update(object, currentUser, setLoading, newPhoto)
@@ -119,14 +129,32 @@ const BizCard = () => {
                 <input ref={positionRef} placeholder='Current Position...' className='text-black h-4 text-sm outline-none w-56 font-josefin font-bold '/>
                 <input ref={companyRef} placeholder='Current Company...' className='text-black h-4 text-sm outline-none w-56 font-josefin font-bold '/>
                 <input ref={emailRef} placeholder='Email...' className='text-black text-sm h-6   outline-none w-56 font-josefin font-bold '/>
-                <div className=' items-center mt-1 w-56 h-6 flex flex-row'>
-                    <BsLinkedin className='cursor-pointer h-6 w-6 text-[#0077B7]'/>
-                    <FaInstagram className='cursor-pointer rounded-md text-white insta h-6 w-6 ml-2'/>
-                    <FaGithubSquare className='cursor-pointer rounded-md text-black scale-[1.1] h-6 w-6 ml-2'/>
-                    <AiFillFacebook className='cursor-pointer rounded-md text-[#1877F2] h-6 scale-[1.2] w-6 ml-2'/>
-                    <IoLogoYoutube className='cursor-pointer rounded-md text-[#FF0001] h-6 scale-[1.1] w-6 ml-2'/>
-                    <FaTwitter className='cursor-pointer rounded-md text-[#189DF1] h-6 scale-[1.1] w-6 ml-2'/>
-                    <GoBrowser className='cursor-pointer rounded-md  h-6 scale-[1.1] w-6 ml-2'/>
+                <div className=' items-center mt-1 w-56 h-9 rounded-md flex flex-row border-[1px] p-1 justify-center'>
+                <label className='text-xs font-josefin absolute ml-44 mb-9 w-10 flex items-center justify-center  bg-white'>Links
+                <button onClick={() => {setShowAddLinks(true)}} className='text-xs shadow-md flex items-center justify-center rounded-full w-3 h-3 bg-gray-500 p-1 text-white ml-1'>+</button>
+                </label>
+                {
+                    linkedin.includes('http')?<a href={linkedin} rel="noopener noreferrer" target="_blank"><BsLinkedin className='cursor-pointer h-6 w-6 text-[#0077B7]'/></a>:null
+                }
+                {
+                    instagram.includes('http')?<a href={instagram} rel="noopener noreferrer" target="_blank"><FaInstagram className='cursor-pointer rounded-md text-white insta h-6 w-6 ml-2'/></a>:null
+                }
+                {
+                    github.includes('http')?<a href={github} rel="noopener noreferrer" target="_blank"><FaGithubSquare className='cursor-pointer rounded-md text-black scale-[1.1] h-6 w-6 ml-2'/></a>:null
+                } 
+                {
+                    facebook.includes('http')?<a href={facebook} rel="noopener noreferrer" target="_blank"><AiFillFacebook className='cursor-pointer rounded-md text-[#1877F2] h-6 scale-[1.2] w-6 ml-2'/></a>:null
+                }
+                {
+                    youtube.includes('http')?<a href={youtube} rel="noopener noreferrer" target="_blank"><IoLogoYoutube className='cursor-pointer rounded-md text-[#FF0001] h-6 scale-[1.1] w-6 ml-2'/></a>:null
+                }
+                {
+                    twitter.includes('http')?<a href={twitter} rel="noopener noreferrer" target="_blank"><FaTwitter className='cursor-pointer rounded-md text-[#189DF1] h-6 scale-[1.1] w-6 ml-2'/></a>:null
+                }
+                {
+                    website.includes('http')?<a href={website} rel="noopener noreferrer" target="_blank"><GoBrowser className='cursor-pointer rounded-md  h-6 scale-[1.1] w-6 ml-2'/></a>:null
+                }
+                    
                 </div>
             </div>
             <div className=' w-[372px] h-16 bg-black mt-3  rounded-md'>
@@ -155,6 +183,9 @@ const BizCard = () => {
         </div>
         {
             showAddSkills? <AddSkills setShowAddSkills={setShowAddSkills} skills={skills} setSkills={setSkills}/>:null
+        }
+        {
+            showAddLinks?<AddLink setShowAddLinks={setShowAddLinks} setLinkedin={setLinkedin} setInstagram={setInstagram} setGithub={setGithub} setFacebook={setFacebook} setYoutube={setYoutube} setTwitter={setTwitter} setWebsite={setWebsite} linkedin={linkedin} github={github} instagram={instagram} youtube={youtube} facebook={facebook} twitter={twitter} website={website}/>:null 
         }
     </div>
   )
