@@ -9,6 +9,10 @@ import { GoBrowser } from 'react-icons/go'
 import '../App.css'
 import { doc, getDoc } from 'firebase/firestore'
 import { db } from '../firebase'
+import { FcEditImage } from 'react-icons/fc'
+import AddSkills from '../components/AddSkills'
+import ScrollContainer from 'react-indiana-drag-scroll'
+
 const BizCard = () => {
     const  {currentUser } = useAuth()
     const docRef = doc(db, "/bizcards", `${currentUser.uid}`)
@@ -18,6 +22,19 @@ const BizCard = () => {
     const emailRef = useRef() as React.MutableRefObject<HTMLInputElement>
     const bioRef = useRef() as React.MutableRefObject<HTMLTextAreaElement>
     const [loading, setLoading] = useState(false)
+    const [photo, setPhoto] = useState("")
+    const [newPhoto, setNewPhoto] = useState(null)
+    const inputFile = useRef<HTMLInputElement | null>(null);
+    const [showAddSkills, setShowAddSkills] = useState(false)
+    const [skills, setSkills] = useState<any>([])
+    const [ linkedin, setLinkedin ] = useState("")
+    const [ github, setGithub ] = useState("")
+    const [ instagram, setInstagram ] = useState("")
+    const [ twitter, setTwitter ] = useState("")
+    const [ website, setWebsite ] = useState("")
+    const [ youtube, setYoutube ] = useState("")
+    const [ facebook, setFacebook ] = useState("")
+
 
     useEffect(() => {
         getDoc(docRef).then((docsnap) => {
@@ -27,9 +44,37 @@ const BizCard = () => {
                 companyRef.current.value = docsnap.data()?.company
                 emailRef.current.value = docsnap.data()?.email
                 bioRef.current.value = docsnap.data()?.bio
+                setPhoto(docsnap.data()?.photo)
+                setSkills(docsnap.data()?.skills! ? docsnap.data()?.skills : [] )
             }
         })
     }, [])
+
+    const handleEditPhoto = () => {
+        inputFile.current!.click();
+    }
+
+    const handleChangePhoto = (e:any) => {
+        e.preventDefault()
+        if (e.target.files[0]) {
+            setNewPhoto(e.target.files[0])
+            setPhoto(URL.createObjectURL(e.target.files[0]))
+        }
+    }
+
+    const handleReset = () => {
+        getDoc(docRef).then((docsnap) => {
+            if (docsnap.exists()) {
+                nameRef.current.value = docsnap.data()?.name
+                positionRef.current.value = docsnap.data()?.position
+                companyRef.current.value = docsnap.data()?.company
+                emailRef.current.value = docsnap.data()?.email
+                bioRef.current.value = docsnap.data()?.bio
+                setPhoto(docsnap.data()?.photo)
+                setSkills(docsnap.data()?.skills! ? docsnap.data()?.skills : [] )
+            }
+        })
+    }
 
     const handleSave = () => {
         
@@ -39,7 +84,6 @@ const BizCard = () => {
             company: companyRef.current.value,
             email: emailRef.current.value,
             bio: bioRef.current.value,
-            photo: "bllblb",
             linkedin: "http",
             github: "http",
             twitter: "http",
@@ -47,8 +91,18 @@ const BizCard = () => {
             youtube: "http",
             instagram: "http",
             facebook: "http",
+            skills: skills,
         }
-        update(object, currentUser, setLoading)
+        update(object, currentUser, setLoading, newPhoto)
+
+
+    }
+
+    const handleRemoveSkill = (i:any) => {
+        const copy = [...skills]
+
+        copy.splice(i,1)
+        setSkills(copy)
     }
 
 
@@ -56,7 +110,9 @@ const BizCard = () => {
     <div className='w-scren h-screen gap-2 flex-col bg-blue-100 flex items-center justify-center'>
         <div className='w-[400px] h-[300px] grid-cols-2 p-3 bg-white shadow-md rounded-md grid '>
             <div className='w-32 h-32  rounded-md '>
-                <img className='rounded-md' src="https://api.dicebear.com/5.x/fun-emoji/svg?seed=Boots"/>
+            <button disabled={loading} onClick={handleEditPhoto} className='absolute w-5 rounded-md h-5 items-center justify-center flex '> <FcEditImage/> </button>
+            <input onChange={handleChangePhoto} className='absolute hidden' id='file'  ref={inputFile} type={"file"}/>
+                <img draggable={false} className='rounded-md' src={photo !== "" ? photo : "https://api.dicebear.com/5.x/fun-emoji/svg?seed=Boots"}/>
             </div>
             <div className=' w-56 h-32  -ml-10 rounded-md'>
                 <input ref={nameRef} placeholder='Name...' className='text-black outline-none w-56 font-josefin font-bold text-xl'/>
@@ -76,18 +132,30 @@ const BizCard = () => {
             <div className=' w-[372px] h-16 bg-black mt-3  rounded-md'>
                 <textarea ref={bioRef} placeholder='Bio...' className='text-black resize-none outline-none w-[372px] h-16 font-josefin font-bold text-sm'/>
             </div>
-            <div></div>
-            <div className=' w-[372px] mt-3 h-12 border-[1px]  rounded-md flex items-center'>
+            <div className='w-0 h-0'></div>
+            
+            
+            <ScrollContainer horizontal={true} vertical={false} className='w-[372px] mt-3 h-12 border-[1px]  rounded-md flex items-center gap-2'>
                 <label className='text-xs font-josefin absolute mb-12 w-10 flex items-center justify-center ml-2 bg-white'>Skills</label>
-                <button className='text-xs shadow-md flex items-center justify-center rounded-md bg-gray-200 p-1 ml-1'><IoAddCircleSharp className='cursor-pointer rounded-md text-gray-800 h-5 w-5'/></button>
-                
-            </div>
-
+                <button onClick={() => {setShowAddSkills(true)}} className='text-xs shadow-md flex items-center justify-center rounded-md bg-gray-200 p-1 ml-1'><IoAddCircleSharp className='cursor-pointer rounded-md text-gray-800 h-5 w-5'/></button>
+                {
+                     skills!.length>0 ?skills?.map((skill:any, i:any) => {
+                        return <div key={i} className='bg-gray-300 p-1 flex flex-row  rounded-md shadow-md font-josefin text-center'>
+                            <button onClick={() => {handleRemoveSkill(i)}} className='w-2 h-2 flex items-center justify-center text-white rounded-full text-center  bg-red-400'>-</button>
+                            {skill}</div>
+                    }):null
+                }
+                </ScrollContainer>
+            
+            
         </div>
         <div className='w-[400px] flex justify-end items-center gap-2'>
-            <button className='text-xs font-josefin underline text-gray-500'>reset</button>
+            <button onClick={handleReset} className='text-xs font-josefin underline text-gray-500'>reset changes</button>
         <button onClick={handleSave} disabled={loading} className='bg-green-200 p-1 rounded-md shadow-md font-josefin'>Save</button>
         </div>
+        {
+            showAddSkills? <AddSkills setShowAddSkills={setShowAddSkills} skills={skills} setSkills={setSkills}/>:null
+        }
     </div>
   )
 }

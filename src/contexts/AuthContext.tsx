@@ -53,12 +53,21 @@ export function AuthProvider({ children}:any) {
     )
 }
 
-export async function update(object:any, currentUser:any, setLoading:any) {
+export async function update(object:any, currentUser:any, setLoading:any, image:any) {
     setLoading(true)
+    const fileRef = ref(storage , 'profileImages/' + currentUser.uid + '.png');
+    let imageURL : string = currentUser.photoURL
+    if (image!) {
+        const snapshot = await uploadBytes(fileRef, image)
+        const photo = await getDownloadURL(fileRef);
+        imageURL = photo
+        updateProfile(currentUser, {photoURL:photo})
+    }
+
     const docRef = doc(db, "bizcards", `${currentUser.uid}`)
     
     await setDoc(doc(db, "/bizcards", `${currentUser.uid}`), {
-        photo: object.photo,
+        photo: imageURL,
         name: object.name,
         position: object.position,
         company: object.company,
@@ -71,6 +80,7 @@ export async function update(object:any, currentUser:any, setLoading:any) {
         instagram: object.instagram,
         facebook: object.facebook,
         bio: object.bio,
+        skills: object.skills,
     })
     setLoading(false)
 }
