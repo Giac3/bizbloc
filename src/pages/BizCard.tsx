@@ -115,6 +115,9 @@ const BizCard = () => {
         setSkills(copy)
     }
 
+    const handleCopy = () => {
+        navigator.clipboard.writeText(window.location.href);
+    }
 
   return (
     <div className='w-scren h-screen gap-2 flex-col bg-blue-100 flex items-center justify-center'>
@@ -178,7 +181,10 @@ const BizCard = () => {
             
         </div>
         <div className='w-[400px] flex justify-end items-center gap-2'>
-            <button onClick={handleReset} className='text-xs font-josefin underline text-gray-500'>reset changes</button>
+            <div className=' w-full '>
+                <button onClick={handleCopy} className='text-xs duration-300 hover:bg-white font-josefin border-[1px] border-black p-1 rounded-md shadow-md'>Copy Link</button>
+            </div>
+            <button onClick={handleReset} className='text-xs min-w-[74px] font-josefin underline text-gray-500'>reset changes</button>
         <button onClick={handleSave} disabled={loading} className='bg-green-200 p-1 rounded-md shadow-md font-josefin'>Save</button>
         </div>
         {

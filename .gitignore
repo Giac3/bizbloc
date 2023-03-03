@@ -11,6 +11,10 @@ node_modules
 dist
 dist-ssr
 *.local
+.firebaserc
+firebase.json
+firebase-debug.log
+.firebase
 
 # Editor directories and files
 .vscode/*
